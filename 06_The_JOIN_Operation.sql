@@ -66,13 +66,13 @@ GROUP BY matchid, mdate
 
 --# 13. List every mathch with the goals scored by each team as shown. This wil use 'CASE WHEN'
 --#     Trick point: when the goal is 0:0, goal table will not record that game.
---#     !!!!!!! DIDN'T SOLVED YET !!!!!!
+--#     !!!!!!! LEFT JOIN !!!!!!
 SELECT game.mdate, 
        game.team1,
        SUM(CASE WHEN goal.teamid = game.team1 THEN 1 ELSE 0 END) AS score1,
        game.team2,
        SUM(CASE WHEN goal.teamid = game.team2 THEN 1 ELSE 0 END) AS score2
-FROM game JOIN goal ON (goal.matchid = game.id)
+FROM game LEFT JOIN goal ON (goal.matchid = game.id)
 GROUP BY mdate, team1, team2
 
        
