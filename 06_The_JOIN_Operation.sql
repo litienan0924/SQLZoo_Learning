@@ -23,3 +23,56 @@ WHERE player LIKE 'Mario%'
 SELECT player, teamid, coach, gtime
 FROM goal JOIN eteam ON (goal.teamid = eteam.id)
 WHERE gtime <= 10
+
+--# 6. List the dates of the matches and the name of the team in which 'Fernando Santos' was the team1 coach
+SELECT mdate, teamname
+FROM game JOIN eteam ON (game.team1=eteam.id)
+WHERE coach = 'Fernando Santos'
+
+--# 7. List the player for every goal scored in a game where the stadium was 'National Stadium, Warsaw'
+SELECT player
+FROM game JOIN goal ON (game.id = goal.matchid)
+WHERE stadium = 'National Stadium, Warsaw'
+
+--# 8. Show the name of all players who scored a goal against Germany
+SELECT DISTINCT(player)
+FROM goal JOIN game ON (goal.matchid = game.id)
+WHERE (team1 = 'GER' OR team2 = 'GER')
+  AND teamid <> 'GER'
+
+--# 9. Show teamname and the total number of goals scored
+SELECT teamname, COUNT(teamid)
+FROM eteam JOIN goal ON (id=teamid)
+GROUP BY teamname
+
+--# 10. Show the stadium and the number of goals scored in each stadium
+SELECT DISTINCT(stadium), COUNT(teamid)
+FROM game JOIN goal ON (game.id = goal.matchid)
+GROUP BY stadium
+
+--# 11. For every match involving 'POL', show the matchid, date and  
+--#     the number of goals scored
+SELECT matchid, mdate, COUNT(teamid)
+FROM game JOIN goal ON (game.id = goal.matchid)
+WHERE (team1 = 'POL' OR team2 = 'POL')
+GROUP by matchid, mdate
+
+--# 12. For every match where 'GER' scored, show matchid, match date, and the number of goals scored by 'GER'
+SELECT matchid, mdate, COUNT(teamid)
+FROM game JOIN goal ON (game.id = goal.matchid)
+WHERE (team1 <> 'GER' OR team2 <> 'GER')
+  AND teamid = 'GER'
+GROUP BY matchid, mdate
+
+--# 13. List every mathch with the goals scored by each team as shown. This wil use 'CASE WHEN'
+--#     Trick point: when the goal is 0:0, goal table will not record that game.
+--#     !!!!!!! DIDN'T SOLVED YET !!!!!!
+SELECT game.mdate, 
+       game.team1,
+       SUM(CASE WHEN goal.teamid = game.team1 THEN 1 ELSE 0 END) AS score1,
+       game.team2,
+       SUM(CASE WHEN goal.teamid = game.team2 THEN 1 ELSE 0 END) AS score2
+FROM game JOIN goal ON (goal.matchid = game.id)
+GROUP BY mdate, team1, team2
+
+       
